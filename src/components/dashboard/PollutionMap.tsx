@@ -116,16 +116,16 @@ export default function PollutionMap({ cities }: PollutionMapProps) {
   }, [cities]);
 
   return (
-    <div className="bg-surface-800 rounded-xl border border-surface-700 overflow-hidden">
-      <div className="px-5 py-3 border-b border-surface-700 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-gray-300">
+    <div style={{ background: "#262626", border: "1px solid #393939", borderRadius: 4, overflow: "hidden" }}>
+      <div style={{ padding: "12px 20px", borderBottom: "1px solid #393939", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2 style={{ fontSize: "0.8125rem", fontWeight: 600, color: "#c6c6c6" }}>
           Ghana Air Quality Map
         </h2>
-        <span className="text-[10px] text-gray-500">
+        <span style={{ fontSize: 10, color: "#6f6f6f" }}>
           Circle size = AQI severity
         </span>
       </div>
-      <div ref={mapRef} className="h-[420px] w-full" />
+      <div ref={mapRef} style={{ height: 420, width: "100%" }} />
     </div>
   );
 }
