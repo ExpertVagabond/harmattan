@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-harmattan-50: #fef9f0;
+  --color-harmattan-100: #fdf0d9;
+  --color-harmattan-200: #faddaf;
+  --color-harmattan-300: #f6c47a;
+  --color-harmattan-400: #f0a443;
+  --color-harmattan-500: #ec8b1e;
+  --color-harmattan-600: #dd7014;
+  --color-harmattan-700: #b75413;
+  --color-harmattan-800: #924217;
+  --color-harmattan-900: #763816;
+  --color-harmattan-950: #401b09;
+
+  --color-aqi-good: #4ade80;
+  --color-aqi-moderate: #facc15;
+  --color-aqi-unhealthy-sensitive: #fb923c;
+  --color-aqi-unhealthy: #f87171;
+  --color-aqi-very-unhealthy: #a855f7;
+  --color-aqi-hazardous: #7f1d1d;
+
+  --color-surface-900: #0f1115;
+  --color-surface-800: #1a1d24;
+  --color-surface-700: #252830;
+  --color-surface-600: #31353e;
+
+  --font-sans: "SF Pro Display", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", ui-monospace, monospace;
+}
+
+html {
+  background-color: var(--color-surface-900);
+  color: #e5e7eb;
+}
+
+body {
+  min-height: 100dvh;
+}
