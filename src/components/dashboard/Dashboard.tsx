@@ -8,6 +8,8 @@ import StatsBar from "./StatsBar";
 import PollutionMap from "./PollutionMap";
 import HealthAdvisory from "./HealthAdvisory";
 import TrendChart from "./TrendChart";
+import PollutionSources from "./PollutionSources";
+import CommunityReports from "./CommunityReports";
 
 // Realistic baseline AQI data for Ghanaian cities (EPA Ghana / WAQI averages)
 const BASELINE_DATA: Record<string, { aqi: number; pm25: number; pm10: number }> = {
@@ -193,6 +195,11 @@ export default function Dashboard() {
             cityData.find((c) => c.city === "Kumasi")?.aqi ?? 60
           )}
         />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PollutionSources />
+        <CommunityReports />
       </div>
     </div>
   );

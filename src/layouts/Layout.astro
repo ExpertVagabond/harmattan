@@ -10,6 +10,9 @@ const {
   title = "Harmattan — Ghana Air Quality Monitor",
   description = "Real-time air quality monitoring for Ghana. Track pollution levels, get health advisories, and report environmental hazards in your community.",
 } = Astro.props;
+
+const ogImage = "https://harmattan.pages.dev/og.png";
+const siteUrl = "https://harmattan.pages.dev";
 ---
 
 <!doctype html>
@@ -21,6 +24,17 @@ const {
     <meta name="theme-color" content="#0f1115" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={siteUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -38,7 +52,20 @@ const {
           </svg>
           Harmattan
         </a>
-        <div class="flex items-center gap-6 text-sm">
+
+        <!-- Mobile menu button -->
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden text-gray-400 hover:text-gray-200 p-1"
+          aria-label="Toggle menu"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </button>
+
+        <!-- Desktop nav -->
+        <div class="hidden md:flex items-center gap-6 text-sm">
           <a href="/" class="text-gray-300 hover:text-harmattan-400 transition-colors">Dashboard</a>
           <a href="/about" class="text-gray-300 hover:text-harmattan-400 transition-colors">About</a>
           <a href="/report" class="bg-harmattan-600 hover:bg-harmattan-500 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">
@@ -46,13 +73,48 @@ const {
           </a>
         </div>
       </div>
+
+      <!-- Mobile nav -->
+      <div id="mobile-menu" class="hidden md:hidden border-t border-surface-700 px-4 py-3 space-y-2">
+        <a href="/" class="block text-gray-300 hover:text-harmattan-400 text-sm py-1.5">Dashboard</a>
+        <a href="/about" class="block text-gray-300 hover:text-harmattan-400 text-sm py-1.5">About</a>
+        <a href="/report" class="block bg-harmattan-600 hover:bg-harmattan-500 text-white px-3 py-2 rounded-lg text-sm font-medium text-center mt-2">
+          Report Pollution
+        </a>
+      </div>
     </nav>
+
     <slot />
+
     <footer class="border-t border-surface-700 bg-surface-800/50 mt-16">
-      <div class="max-w-7xl mx-auto px-4 py-8 text-center text-sm text-gray-500">
-        <p>Harmattan &mdash; Open-source air quality monitoring for Ghana</p>
-        <p class="mt-1">Tech Hub Africa Hackathon 2026 &middot; Pollution Control Track</p>
+      <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+          <div class="text-center md:text-left">
+            <p>Harmattan &mdash; Open-source air quality monitoring for Ghana</p>
+            <p class="mt-1">Tech Hub Africa Hackathon 2026 &middot; Pollution Control Track</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <a href="/about" class="hover:text-gray-300 transition-colors">About</a>
+            <a href="/report" class="hover:text-gray-300 transition-colors">Report</a>
+            <a
+              href="https://github.com/ExpertVagabond/harmattan"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-gray-300 transition-colors"
+            >
+              GitHub
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
+
+    <script>
+      const btn = document.getElementById("mobile-menu-btn");
+      const menu = document.getElementById("mobile-menu");
+      btn?.addEventListener("click", () => {
+        menu?.classList.toggle("hidden");
+      });
+    </script>
   </body>
 </html>
