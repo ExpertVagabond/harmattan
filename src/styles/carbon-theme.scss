@@ -1,0 +1,69 @@
+@use '@carbon/react/scss/reset';
+@use '@carbon/react/scss/themes';
+@use '@carbon/react/scss/theme' with (
+  $theme: themes.$g100
+);
+@use '@carbon/react' as carbon;
+
+// Theme mixin must be inside a selector
+:root {
+  @include carbon.theme();
+}
+
+:root {
+  --harmattan-50: #fef9f0;
+  --harmattan-100: #fdf0d9;
+  --harmattan-200: #faddaf;
+  --harmattan-300: #f6c47a;
+  --harmattan-400: #f0a443;
+  --harmattan-500: #ec8b1e;
+  --harmattan-600: #dd7014;
+  --harmattan-700: #b75413;
+  --harmattan-800: #924217;
+  --harmattan-900: #763816;
+  --harmattan-950: #401b09;
+
+  --aqi-good: #4ade80;
+  --aqi-moderate: #facc15;
+  --aqi-unhealthy-sensitive: #fb923c;
+  --aqi-unhealthy: #f87171;
+  --aqi-very-unhealthy: #a855f7;
+  --aqi-hazardous: #7f1d1d;
+}
+
+body {
+  background-color: #161616;
+  color: #f4f4f4;
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+  min-height: 100dvh;
+}
+
+.cds--header {
+  border-bottom: 1px solid #393939 !important;
+}
+
+.cds--tile {
+  background-color: #262626 !important;
+  border: 1px solid #393939;
+
+  &:hover {
+    border-color: #525252;
+  }
+}
+
+.cds--tab-content {
+  padding: 1rem 0 !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: #262626 !important;
+  border: 1px solid #393939 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+}
+.leaflet-popup-tip {
+  background: #262626 !important;
+}
+.leaflet-popup-close-button {
+  color: #c6c6c6 !important;
+}
