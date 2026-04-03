@@ -67,3 +67,22 @@ body {
 .leaflet-popup-close-button {
   color: #c6c6c6 !important;
 }
+
+// Responsive overrides for dashboard grids
+@media (max-width: 671px) {
+  .dash-top { grid-template-columns: 1fr !important; }
+  .dash-map { grid-template-columns: 1fr !important; }
+  .dash-cards { grid-template-columns: 1fr !important; }
+  .dash-charts { grid-template-columns: 1fr !important; }
+  .dash-stats { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (min-width: 672px) and (max-width: 1055px) {
+  .dash-map { grid-template-columns: 1fr !important; }
+  .dash-cards { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+// Remove Carbon Content left margin (we don't use persistent sidenav)
+.cds--content {
+  margin-left: 0 !important;
+  padding: 0 !important;
+}
