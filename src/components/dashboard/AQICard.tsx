@@ -9,6 +9,34 @@ interface AQICardProps {
   timestamp: string;
 }
 
+function MiniGauge({ value, color }: { value: number; color: string }) {
+  const size = 56;
+  const strokeWidth = 5;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const pct = Math.min(1, value / 500);
+
+  return (
+    <svg width={size} height={size} className="-rotate-90">
+      <circle
+        cx={size / 2} cy={size / 2} r={radius}
+        stroke="#252830" strokeWidth={strokeWidth} fill="none"
+      />
+      <circle
+        cx={size / 2} cy={size / 2} r={radius}
+        stroke={color} strokeWidth={strokeWidth} fill="none"
+        strokeLinecap="round"
+        strokeDasharray={circumference}
+        strokeDashoffset={circumference * (1 - pct)}
+        style={{
+          transition: "stroke-dashoffset 1s cubic-bezier(0.16,1,0.3,1)",
+          filter: `drop-shadow(0 0 4px ${color}40)`,
+        }}
+      />
+    </svg>
+  );
+}
+
 export default function AQICard({
   city,
   aqi,
@@ -24,23 +52,28 @@ export default function AQICard({
   });
 
   return (
-    <div className="bg-surface-800 rounded-xl border border-surface-700 p-5 hover:border-surface-600 transition-colors">
+    <div className="bg-surface-800/80 backdrop-blur-sm rounded-xl border border-surface-700 p-5 hover:border-surface-600 transition-all hover:shadow-lg hover:shadow-black/20 group">
       <div className="flex items-start justify-between mb-3">
         <div>
           <h3 className="text-lg font-semibold text-gray-100">{city}</h3>
           <p className="text-xs text-gray-500 mt-0.5">Updated {time}</p>
         </div>
-        <div
-          className="flex items-center justify-center w-14 h-14 rounded-xl text-2xl font-bold"
-          style={{ backgroundColor: category.color + "20", color: category.color }}
-        >
-          {aqi}
+        <div className="relative">
+          <MiniGauge value={aqi} color={category.color} />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span
+              className="text-base font-bold font-mono"
+              style={{ color: category.color }}
+            >
+              {aqi}
+            </span>
+          </div>
         </div>
       </div>
 
       <div
         className="inline-block px-2 py-0.5 rounded-md text-xs font-medium mb-3"
-        style={{ backgroundColor: category.color + "20", color: category.color }}
+        style={{ backgroundColor: category.color + "15", color: category.color }}
       >
         {category.label}
       </div>
