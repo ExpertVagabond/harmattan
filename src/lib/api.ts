@@ -10,7 +10,12 @@ const WAQI_TOKEN = "demo";
 
 export async function fetchWAQICity(city: string): Promise<AQIReading | null> {
   try {
-    const res = await fetch(`${WAQI_BASE}/feed/${city}/?token=${WAQI_TOKEN}`);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const res = await fetch(`${WAQI_BASE}/feed/${city}/?token=${WAQI_TOKEN}`, {
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
     const data = await res.json();
     if (data.status !== "ok" || !data.data) return null;
 
