@@ -10,6 +10,10 @@ import HealthAdvisory from "./HealthAdvisory";
 import TrendChart from "./TrendChart";
 import PollutionSources from "./PollutionSources";
 import CommunityReports from "./CommunityReports";
+import ParticleField from "../viz/ParticleField";
+import AQIGauge from "../viz/AQIGauge";
+import CityHeatmap from "../viz/CityHeatmap";
+import DonutChart from "../viz/DonutChart";
 
 // Realistic baseline AQI data for Ghanaian cities (EPA Ghana / WAQI averages)
 const BASELINE_DATA: Record<string, { aqi: number; pm25: number; pm10: number }> = {
@@ -121,85 +125,126 @@ export default function Dashboard() {
       cityData.find((d) => d.city === c.city)?.aqi ?? 0,
   }));
 
+  const pollutionSegments = [
+    { label: "Vehicles", value: 38, color: "#f87171" },
+    { label: "Waste Burning", value: 24, color: "#fb923c" },
+    { label: "Harmattan", value: 18, color: "#facc15" },
+    { label: "Industrial", value: 12, color: "#a855f7" },
+    { label: "Cooking Fuel", value: 8, color: "#60a5fa" },
+  ];
+
   return (
-    <div className="space-y-6">
-      {(error || liveCount === 0) && (
-        <div className="bg-surface-800 border border-surface-600 rounded-lg px-4 py-3 text-sm text-gray-400 flex items-center gap-2">
-          {loading && (
-            <div className="w-3 h-3 border border-harmattan-500 border-t-transparent rounded-full animate-spin shrink-0" />
-          )}
-          <span>
-            {liveCount > 0
-              ? `${liveCount}/${cityData.length} cities reporting live data`
-              : "Showing baseline estimates from EPA Ghana — live API connecting..."}
-          </span>
-        </div>
-      )}
+    <div className="relative">
+      {/* Ambient particle background — density reflects national AQI */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <ParticleField aqi={avgAqi} />
+      </div>
 
-      <StatsBar
-        totalStations={GHANA_CITIES.reduce(
-          (s, c) => s + c.stations.length,
-          0
+      <div className="relative z-10 space-y-6">
+        {(error || liveCount === 0) && (
+          <div className="bg-surface-800/80 backdrop-blur-sm border border-surface-600 rounded-lg px-4 py-3 text-sm text-gray-400 flex items-center gap-2">
+            {loading && (
+              <div className="w-3 h-3 border border-harmattan-500 border-t-transparent rounded-full animate-spin shrink-0" />
+            )}
+            <span>
+              {liveCount > 0
+                ? `${liveCount}/${cityData.length} cities reporting live data`
+                : "Showing baseline estimates from EPA Ghana — live API connecting..."}
+            </span>
+          </div>
         )}
-        citiesMonitored={cityData.length}
-        avgAqi={avgAqi}
-        lastUpdate={new Date().toLocaleTimeString("en-GH", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
-      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <PollutionMap cities={mapCities} />
-        </div>
-        <div className="space-y-6">
-          <HealthAdvisory
-            nationalAvgAqi={avgAqi}
-            worstCity={worstCity.city}
-            worstAqi={worstCity.aqi}
+        {/* National gauge + stats */}
+        <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-start">
+          <div className="bg-surface-800/80 backdrop-blur-sm rounded-xl border border-surface-700 p-6 flex flex-col items-center">
+            <span className="text-[10px] text-gray-500 uppercase tracking-wider mb-3">National Average</span>
+            <AQIGauge value={avgAqi} size={140} label="current" />
+          </div>
+          <StatsBar
+            totalStations={GHANA_CITIES.reduce(
+              (s, c) => s + c.stations.length,
+              0
+            )}
+            citiesMonitored={cityData.length}
+            avgAqi={avgAqi}
+            lastUpdate={new Date().toLocaleTimeString("en-GH", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           />
-          <AQILegend />
         </div>
-      </div>
 
-      <div>
-        <h2 className="text-lg font-semibold text-gray-200 mb-4">
-          City Air Quality
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {cityData.map((city) => (
-            <AQICard
-              key={city.city}
-              city={city.city}
-              aqi={city.aqi}
-              pm25={city.pm25}
-              pm10={city.pm10}
-              dominantPollutant={city.dominantPollutant}
-              timestamp={city.timestamp}
+        {/* Map + sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <PollutionMap cities={mapCities} />
+          </div>
+          <div className="space-y-6">
+            <HealthAdvisory
+              nationalAvgAqi={avgAqi}
+              worstCity={worstCity.city}
+              worstAqi={worstCity.aqi}
             />
-          ))}
+            <AQILegend />
+          </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <TrendChart
-          title="Accra — Today's AQI Trend"
-          data={generateMockTrend(
-            cityData.find((c) => c.city === "Accra")?.aqi ?? 75
-          )}
-        />
-        <TrendChart
-          title="Kumasi — Today's AQI Trend"
-          data={generateMockTrend(
-            cityData.find((c) => c.city === "Kumasi")?.aqi ?? 60
-          )}
-        />
-      </div>
+        {/* City gauge cards */}
+        <div>
+          <h2 className="text-lg font-semibold text-gray-200 mb-4">
+            City Air Quality
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {cityData.map((city) => (
+              <AQICard
+                key={city.city}
+                city={city.city}
+                aqi={city.aqi}
+                pm25={city.pm25}
+                pm10={city.pm10}
+                dominantPollutant={city.dominantPollutant}
+                timestamp={city.timestamp}
+              />
+            ))}
+          </div>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <PollutionSources />
-        <CommunityReports />
+        {/* 24h Heatmap */}
+        <CityHeatmap
+          cities={cityData.map((c) => ({ city: c.city, baseAqi: c.aqi }))}
+        />
+
+        {/* Trend charts */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <TrendChart
+            title="Accra — Today's AQI Trend"
+            data={generateMockTrend(
+              cityData.find((c) => c.city === "Accra")?.aqi ?? 75
+            )}
+          />
+          <TrendChart
+            title="Kumasi — Today's AQI Trend"
+            data={generateMockTrend(
+              cityData.find((c) => c.city === "Kumasi")?.aqi ?? 60
+            )}
+          />
+        </div>
+
+        {/* Sources donut + progress bars + community reports */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="bg-surface-800/80 backdrop-blur-sm rounded-xl border border-surface-700 p-5">
+            <h3 className="text-sm font-semibold text-gray-300 mb-4 text-center">
+              Pollution Source Mix
+            </h3>
+            <DonutChart
+              segments={pollutionSegments}
+              centerValue="100%"
+              centerLabel="of emissions"
+            />
+          </div>
+          <PollutionSources />
+          <CommunityReports />
+        </div>
       </div>
     </div>
   );
